@@ -11,7 +11,7 @@ interface Props {
   timeline: TimelineRecord;
   editTimeline: (id: number) => void;
   destroyTimeline: (id: number) => Promise<any>;
-  flushId: number;
+  flushId: number | null;
 }
 
 export default class Timeline extends Component<Props> {

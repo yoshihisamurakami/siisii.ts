@@ -1,27 +1,96 @@
-// import React from 'react';
-// import logo from './logo.svg';
-import './App.css';
+import { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      Test
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
-    </div>
-  );
+import * as DateService from 'service/DateService';
+import * as TimelineService from 'service/TimelineService';
+import ButtonArea from 'ButtonArea';
+import DateArea from 'DateArea';
+import TimelineArea from 'TimelineArea';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'custom.css';
+
+interface State {
+  targetDate: string;
+  timelines: any;
+  flushId: number | null;
 }
 
-export default App;
+interface Buffer {
+  targetDate: string;
+  needScrollToBottom: boolean;
+}
+
+export default class App extends Component<{}, State> {
+  state: State = {
+    targetDate: DateService.getToday(),
+    timelines: [],
+    flushId: null,
+  };
+
+  buffer: Buffer = {
+    targetDate: DateService.getToday(),
+    needScrollToBottom: false,
+  };
+
+  constructor(props: {}) {
+    super(props);
+    document.title = 'Siisii（しぃしぃ）';
+  }
+
+  componentDidMount() {
+    this.getTimelines();
+  }
+
+  componentDidUpdate() {
+    if (this.buffer.needScrollToBottom) {
+      const element = document.documentElement;
+      const bottom = element.scrollHeight - element.clientHeight;
+      window.scroll(0, bottom);
+    }
+    this.buffer.needScrollToBottom = false;
+  }
+
+  getTimelines = async (
+    needScrollToBottom?: boolean,
+    flushId?: number,
+    targetDate?: string,
+  ) => {
+    this.buffer.needScrollToBottom = needScrollToBottom as boolean;
+    const newTargetDate: string =
+      targetDate != null ? targetDate : this.buffer.targetDate;
+    this.buffer.targetDate = newTargetDate;
+    const result = await TimelineService.getIndex(newTargetDate);
+    if (typeof result.data === 'undefined') {
+      return;
+    }
+    const data = result.data;
+    this.setState({
+      targetDate: data.data.target_date,
+      timelines: data.data.timelines,
+      flushId: flushId as number | null,
+    });
+  };
+
+  updateTargetDate = (targetDate: string) => {
+    this.buffer.targetDate = targetDate;
+    this.getTimelines();
+  };
+
+  render(): JSX.Element {
+    return (
+      <div className="container">
+        <ButtonArea getTimelines={this.getTimelines} />
+        <DateArea
+          targetDate={this.state.targetDate}
+          updateTargetDate={this.updateTargetDate}
+        />
+        <TimelineArea
+          targetDate={this.state.targetDate}
+          timelines={this.state.timelines}
+          getTimelines={this.getTimelines}
+          flushId={this.state.flushId}
+        />
+      </div>
+    );
+  }
+}

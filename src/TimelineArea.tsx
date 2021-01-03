@@ -17,7 +17,7 @@ interface Props {
     flushId?: number,
     targetDate?: string,
   ) => Promise<any>;
-  flushId: number;
+  flushId: number | null;
 }
 
 interface State {
