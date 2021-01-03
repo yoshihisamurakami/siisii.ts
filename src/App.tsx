@@ -9,9 +9,15 @@ import TimelineArea from 'TimelineArea';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'custom.css';
 
+interface TimelineRecord {
+  id: number;
+  registered_at: string;
+  comment: string;
+}
+
 interface State {
   targetDate: string;
-  timelines: any;
+  timelines: TimelineRecord[];
   flushId: number | null;
 }
 

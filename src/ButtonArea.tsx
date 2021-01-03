@@ -8,7 +8,11 @@ import PenIcon from './svg/PenIcon';
 import ReloadIcon from './svg/ReloadIcon';
 
 interface Props {
-  getTimelines: any;
+  getTimelines: (
+    needScrollToBottom?: boolean,
+    flushId?: number,
+    targetDate?: string,
+  ) => Promise<any>;
 }
 
 interface State {

@@ -59,6 +59,12 @@
 .time {
   color: #222;
 }
+
+.padding-narrow {
+  padding: 0 0;
+  text-align: center;
+}
+
 .operation {
   text-align: right;
 }

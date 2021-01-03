@@ -1,10 +1,19 @@
 import { Component } from 'react';
 
+interface TimelineRecord {
+  id: number;
+  registered_at: string;
+  comment: string;
+}
+
 interface Props {
   key: number;
-  timeline: any;
-  updateTimeline: any;
-  cancelTimeline: any;
+  timeline: TimelineRecord;
+  updateTimeline: (
+    id: number,
+    param: { registered_at: string; comment: string },
+  ) => Promise<any>;
+  cancelTimeline: () => void;
 }
 
 interface State {
@@ -20,10 +29,11 @@ export default class TimelineEdit extends Component<Props, State> {
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const element = e.target;
-    if (element.name === 'registered_at') {
-      this.setState({ registered_at: element.value });
-    } else if (element.name === 'comment') {
-      this.setState({ comment: element.value });
+    const name: string = element.name;
+    if (name === 'registered_at') {
+      this.setState({ [name]: element.value });
+    } else if (name === 'comment') {
+      this.setState({ [name]: element.value });
     }
   };
 
@@ -50,7 +60,7 @@ export default class TimelineEdit extends Component<Props, State> {
         <div className="col-sm col-3 time">
           <input
             type="text"
-            className="form-control"
+            className="form-control padding-narrow"
             name="registered_at"
             value={this.state.registered_at}
             onChange={this.handleChange}
