@@ -1,11 +1,12 @@
 import { Component } from 'react';
-import * as TimelineService from './service/TimelineService';
-import Timeline from './Timeline';
-import TimelineEdit from './TimelineEdit';
+import * as TimelineService from 'service/TimelineService';
+import * as DateService from 'service/DateService';
+import Timeline from 'Timeline';
+import TimelineEdit from 'TimelineEdit';
 
 interface TimelineRecord {
   id: number;
-  registered_at: string;
+  registered_at: string; // 'HH:MM'
   comment: string;
 }
 
@@ -43,13 +44,27 @@ export default class TimelineArea extends Component<Props, State> {
   ) => {
     const params = {
       id: id,
-      registered_at: `${this.props.targetDate} ${param.registered_at}`,
+      registered_at: this.updatedAt(param.registered_at),
       comment: param.comment,
     };
     const result = await TimelineService.update(params);
     this.clearEditMode();
-    this.props.getTimelines(false, result.data.timeline.id);
+    this.props.getTimelines(
+      false,
+      result.data.timeline.id,
+      result.data.target_date,
+    );
   };
+
+  // 時刻が未来であれば１日前の時刻を返す
+  updatedAt(registered_at: string): string {
+    const datetime: string = `${this.props.targetDate} ${registered_at}`;
+    const isFuture = DateService.isFuture(datetime);
+    if (!isFuture) {
+      return datetime;
+    }
+    return DateService.getPrevDateTime(datetime);
+  }
 
   // 「削除」リンクが押されたとき
   destroyTimeline = async (id: number) => {
@@ -70,7 +85,7 @@ export default class TimelineArea extends Component<Props, State> {
     });
   };
 
-  editMode = (id: number) => {
+  editMode = (id: number): boolean => {
     return this.state.timelineOnEdit === id;
   };
 

@@ -42,6 +42,16 @@ export default class TimelineEdit extends Component<Props, State> {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     e.preventDefault();
+
+    if (this.state.comment === '') {
+      alert('内容は必ず入力してください。');
+      return;
+    }
+    const registered_at: string = this.state.registered_at;
+    if (registered_at.match(/^[0-9]{2}:[0-9]{2}$/) === null) {
+      alert('時刻は「HH:MM」で入力してください。');
+      return;
+    }
     const param = {
       registered_at: this.state.registered_at,
       comment: this.state.comment,

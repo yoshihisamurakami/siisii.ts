@@ -24,4 +24,27 @@ const formattedDate = (date: Date): string => {
   return `${year}-${monthStr}-${dayStr}`;
 };
 
-export { getToday, getPrevDay, getNextDay };
+const formattedDatetime = (date: Date): string => {
+  const fmDate = formattedDate(date);
+  console.log('fmDate => ' + fmDate);
+  const hour = date.getHours().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, '0');
+  const second = date.getSeconds().toString().padStart(2, '0');
+  return `${fmDate} ${hour}:${minute}:${second}`;
+};
+
+// 引数で与えられた日付＋時刻が未来だったらtrueを返す
+function isFuture(datetime: string): boolean {
+  const paramDate = new Date(datetime);
+  const now = new Date();
+  return paramDate > now;
+}
+
+// 引数で与えられた日付＋時刻の24時間前の日付＋時刻を返す
+const getPrevDateTime = (date: string): string => {
+  let prevDate = new Date(date);
+  prevDate.setDate(prevDate.getDate() - 1);
+  return formattedDatetime(prevDate);
+};
+
+export { getToday, getPrevDay, getNextDay, isFuture, getPrevDateTime };
