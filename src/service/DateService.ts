@@ -35,14 +35,20 @@ const formattedDatetime = (date: Date): string => {
 
 // 引数で与えられた日付＋時刻が未来だったらtrueを返す
 function isFuture(datetime: string): boolean {
-  const paramDate = new Date(datetime);
+  const datetime_with_second = datetime + ':00';
+  const right_datetime = datetime_with_second.replace(/-/g, '/');
+  const paramDate = new Date(right_datetime);
   const now = new Date();
+
   return paramDate > now;
 }
 
 // 引数で与えられた日付＋時刻の24時間前の日付＋時刻を返す
-const getPrevDateTime = (date: string): string => {
-  let prevDate = new Date(date);
+const getPrevDateTime = (datetime: string): string => {
+  const datetime_with_second = datetime + ':00';
+  const right_datetime = datetime_with_second.replace(/-/g, '/');
+  let prevDate = new Date(right_datetime);
+
   prevDate.setDate(prevDate.getDate() - 1);
   return formattedDatetime(prevDate);
 };
