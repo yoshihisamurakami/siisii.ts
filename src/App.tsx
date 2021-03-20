@@ -5,6 +5,8 @@ import * as TimelineService from 'service/TimelineService';
 import ButtonArea from 'ButtonArea';
 import DateArea from 'DateArea';
 import TimelineArea from 'TimelineArea';
+import { AmplifyAuthenticator, AmplifySignIn } from '@aws-amplify/ui-react';
+import SignoutWrapper from 'SignoutWrapper';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'custom.css';
@@ -26,7 +28,7 @@ interface Buffer {
   needScrollToBottom: boolean;
 }
 
-export default class App extends Component<{}, State> {
+class App extends Component<{}, State> {
   state: State = {
     targetDate: DateService.getToday(),
     timelines: [],
@@ -84,19 +86,32 @@ export default class App extends Component<{}, State> {
 
   render(): JSX.Element {
     return (
-      <div className="container">
-        <ButtonArea getTimelines={this.getTimelines} />
-        <DateArea
-          targetDate={this.state.targetDate}
-          updateTargetDate={this.updateTargetDate}
-        />
-        <TimelineArea
-          targetDate={this.state.targetDate}
-          timelines={this.state.timelines}
-          getTimelines={this.getTimelines}
-          flushId={this.state.flushId}
-        />
-      </div>
+      <AmplifyAuthenticator>
+        <AmplifySignIn headerText="Siisii" slot="sign-in" hideSignUp={true} />
+        <div className="container">
+          <ButtonArea getTimelines={this.getTimelines} />
+          <DateArea
+            targetDate={this.state.targetDate}
+            updateTargetDate={this.updateTargetDate}
+          />
+          <TimelineArea
+            targetDate={this.state.targetDate}
+            timelines={this.state.timelines}
+            getTimelines={this.getTimelines}
+            flushId={this.state.flushId}
+          />
+          {/* <div className="row">
+            <div className="col-3"></div>
+            <div className="col-3">
+              <AmplifySignOut />
+            </div>
+            <div className="col-3"></div>
+          </div> */}
+          <SignoutWrapper />
+        </div>
+      </AmplifyAuthenticator>
     );
   }
 }
+
+export default App;
